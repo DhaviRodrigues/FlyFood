@@ -2,16 +2,23 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 
 
-OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"C:\Users\dhavi\OneDrive\Área de Trabalho\Dhavi\UFRPE\2° Período\Projeto Interdisciplinar em Sistemas de Informação II\FlyFood\Código\build\assets\frame0")
-
 def relative_to_assets(path: str) -> Path:
-    return ASSETS_PATH / Path(path)
+    """Monta um caminho absoluto para um arquivo de asset, facilitando o acesso."""
+    output_path = Path(__file__).parent  # Pega o caminho do diretório onde este script está localizado.
+    assets_path = output_path / "assets" / "frame0"  # Constrói o caminho para a subpasta de assets especificada.
+    return assets_path / Path(path)  # Retorna o caminho completo para o arquivo de asset final.
 
 
-window = Tk()
+window = Tk() # Cria a janela principal da aplicação.
+window.title("FlyFood") # Define o título da janela.
+window.geometry("720x350") # Define o tamanho fixo da janela em pixels.
 
-window.geometry("720x350")
+icon_path = Path(__file__).parent / "assets" / "256_icon.png" # Define o caminho para o ícone da janela.
+
+icon = PhotoImage(file=icon_path) # Carrega a imagem do ícone em um formato compatível com o Tkinter.
+
+window.iconphoto(True,icon)# Define a imagem carregada como o ícone da janela.
+
 window.configure(bg = "#FFFFFF")
 
 
