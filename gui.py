@@ -81,13 +81,13 @@ image_2 = canvas.create_image(
     image=image_image_2
 )
 
-image_image_3 = PhotoImage(
-    file=relative_to_assets("image_3.png"))
-image_3 = canvas.create_image(
-    109.0,
-    43.0,
-    image=image_image_3
-)
+#image_image_3 = PhotoImage(
+#    file=relative_to_assets("image_3.png"))
+#image_3 = canvas.create_image(
+#    109.0,
+#    43.0,
+#    image=image_image_3
+#)
 
 image_image_4 = PhotoImage(
     file=relative_to_assets("image_4.png"))
@@ -117,13 +117,13 @@ entry_1.place(
     height=97.0
 )
 
-image_image_5 = PhotoImage(
-    file=relative_to_assets("image_5.png"))
-image_5 = canvas.create_image(
-    55.0,
-    43.0,
-    image=image_image_5
-)
+#image_image_5 = PhotoImage(
+#    file=relative_to_assets("image_5.png"))
+#image_5 = canvas.create_image(
+#    55.0,
+#    43.0,
+#    image=image_image_5
+#)
 
 button_image_3 = PhotoImage(
     file=relative_to_assets("button_3.png"))
