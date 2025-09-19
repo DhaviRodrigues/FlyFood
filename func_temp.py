@@ -1,4 +1,4 @@
-from tkinter import Label, PhotoImage, Toplevel, Button, Frame
+from tkinter import Label, PhotoImage, Toplevel, Button, Frame, filedialog
 
 def custom_messagebox(master,titulo, mensagem):
     """Exibe uma caixa de diálogo modal com mensagem e botão "OK"."""
