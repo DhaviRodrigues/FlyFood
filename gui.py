@@ -1,6 +1,6 @@
 from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
-
+from tkextrafont import Font
 
 def relative_to_assets(path: str) -> Path:
     """Monta um caminho absoluto para um arquivo de asset, facilitando o acesso."""
@@ -21,6 +21,25 @@ window.iconphoto(True,icon)# Define a imagem carregada como o ícone da janela.
 
 window.configure(bg = "#FFFFFF")
 
+# Este bloco 'try...except' carrega fontes customizadas de forma segura.
+try:
+    # Define os caminhos para os arquivos de fonte 'Poppins' regular e black.
+    font_path_light_italic = Path(__file__).parent / "fonts" / "LEMONMILK-LightItalic.ttf"
+    font_path_negrito = Path(__file__).parent / "fonts" / "LEMONMILK-Bold.ttf"
+    
+    # Carrega os arquivos de fonte
+    window.font_lemonmilk_light_italic = Font(file=font_path_light_italic, family="Lemon Milk Light Italic")
+    window.font_lemonmilk_bold = Font(file=font_path_negrito, family="Lemon Milk Negrito")
+    
+    # Imprime uma mensagem que confirma que as fontes foram carregadas com sucesso.
+    print("Fontes 'Poppins' carregadas com sucesso.")
+
+# Se ocorrer qualquer erro no bloco 'try' (ex: arquivo não encontrado)...
+except Exception as e:
+    print(f"Erro ao carregar fontes: {e}. A usar fontes padrão.")
+    # E define fontes do padrão do sistema para garantir que a aplicação continue funcionando.
+    window.font_lemonmilk_light_italic = ("Arial", 18)
+    window.font_lemonmilk_bold = ("Arial", 24, "bold")
 
 canvas = Canvas(
     window,
@@ -81,13 +100,6 @@ image_2 = canvas.create_image(
     image=image_image_2
 )
 
-#image_image_3 = PhotoImage(
-#    file=relative_to_assets("image_3.png"))
-#image_3 = canvas.create_image(
-#    109.0,
-#    43.0,
-#    image=image_image_3
-#)
 
 image_image_4 = PhotoImage(
     file=relative_to_assets("image_4.png"))
@@ -116,14 +128,6 @@ entry_1.place(
     width=163.0,
     height=97.0
 )
-
-#image_image_5 = PhotoImage(
-#    file=relative_to_assets("image_5.png"))
-#image_5 = canvas.create_image(
-#    55.0,
-#    43.0,
-#    image=image_image_5
-#)
 
 button_image_3 = PhotoImage(
     file=relative_to_assets("button_3.png"))
