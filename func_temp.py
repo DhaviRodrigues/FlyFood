@@ -6,7 +6,7 @@ def selecionar_arquivo():
     matriz = None
     matriz = filedialog.askopenfilename( # Abre a janela de seleção de arquivo.
         title="Selecione o caminho",
-        filetypes=[("Ficheiros de Imagem", "*.txt")] #Exemplo "*.txt"
+        filetypes=[("Ficheiros de Texto", "*.txt")] #Exemplo "*.txt"
     )
 
     if not matriz: # Se o usuário cancelar a seleção, a função termina.
