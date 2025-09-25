@@ -2,7 +2,7 @@ from tkinter import Label, PhotoImage, Toplevel, Button, Frame, filedialog
 
 def selecionar_arquivo():
     
-    """Abre uma janela para o usuário selecionar um arquivo de imagem e exibe um preview na tela."""
+    """Abre uma janela para o usuário selecionar um arquivo de arquivo txt."""
     matriz = None
     matriz = filedialog.askopenfilename( # Abre a janela de seleção de arquivo.
         title="Selecione o caminho",
