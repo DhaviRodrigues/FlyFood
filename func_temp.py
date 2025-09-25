@@ -19,8 +19,9 @@ def custom_messagebox(master,titulo, mensagem):
     
     Exemplo dos parâmetros:
     master: SEMPRE será a variável window
-    titulo: Erro na seleção de arquivo
-    mensagem: O Arquivo selecionado não é compatível com o programa, selecione outro formato."""
+    titulo: "Erro na seleção de arquivo"
+    mensagem: "O Arquivo selecionado não é compatível com o programa, selecione outro formato."
+    """
 
     dialog = Toplevel(master)  # Cria uma nova janela (Toplevel) que pertence à janela 'master'.
     dialog.title(titulo)  # Define o texto da barra de título.
