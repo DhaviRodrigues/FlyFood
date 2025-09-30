@@ -3,8 +3,9 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage,Label
 from tkextrafont import Font
 import main
 
-global resultado
-resultado=None
+def armazenar_resultado(window):
+    global resultado
+    resultado = main.RotasDrone.selecionar_arquivo(window)
 
 def relative_to_assets(path: str) -> Path:
     """Monta um caminho absoluto para um arquivo de asset, facilitando o acesso."""
@@ -70,7 +71,7 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: main.RotasDrone.selecionar_arquivo(window),
+    command=lambda: armazenar_resultado(window),
     relief="flat"
 )
 button_1.place(
@@ -122,8 +123,9 @@ entry_bg_1 = canvas.create_image(
 entry_1 = Text(
     bd=0,
     bg="#FFFFFF",
-    fg="#000716",
-    highlightthickness=0
+    fg="#7B6052",
+    highlightthickness=0,
+    font=("Lemon Milk Negrito", 32),
 )
 entry_1.place(
     x=719.0,
