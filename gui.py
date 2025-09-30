@@ -3,6 +3,8 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage,Label
 from tkextrafont import Font
 import main
 
+resultado = None
+
 def armazenar_resultado(window):
     global resultado
     resultado = main.RotasDrone.selecionar_arquivo(window)
@@ -105,14 +107,6 @@ image_2 = canvas.create_image(
     image=image_image_2
 )
 
-image_image_3 = PhotoImage(
-    file=relative_to_assets("image_3.png"))
-image_3 = canvas.create_image(
-    855.0,
-    239.0,
-    image=image_image_3
-)
-
 entry_image_1 = PhotoImage(
     file=relative_to_assets("entry_1.png"))
 entry_bg_1 = canvas.create_image(
@@ -122,17 +116,20 @@ entry_bg_1 = canvas.create_image(
 )
 entry_1 = Text(
     bd=0,
-    bg="#FFFFFF",
-    fg="#7B6052",
+    bg="#B3A298",
+    fg="#372115",
     highlightthickness=0,
     font=("Lemon Milk Negrito", 32),
 )
 entry_1.place(
-    x=719.0,
-    y=157.0,
-    width=272.0,
-    height=163.0
+    x=730.0,
+    y=180.0,
+    width=250.0,
+    height=125.0
 )
+
+entry_1.tag_configure("center", justify="center")
+entry_1.config(state="disabled")
 
 button_image_3 = PhotoImage(
     file=relative_to_assets("button_3.png"))

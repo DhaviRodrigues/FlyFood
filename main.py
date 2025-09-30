@@ -133,8 +133,11 @@ class RotasDrone:
         if resultado is None:
             GuiTools.custom_messagebox(window, "Erro na seleção de arquivo", "Nenhum arquivo foi selecionado. Por favor, selecione um arquivo válido.")
         else:
-            entry.delete("1.0", "end")
+            entry.config(state="normal")
             entry.insert("1.0", resultado)
+            entry.tag_add("center", "1.0", "end-1c")
+            entry.config(state="disabled")
+
     
 
     # def leitura_da_matriz(arquivo_matriz, window):
@@ -179,7 +182,7 @@ class GuiTools:
             dialog,
             text=mensagem,  # O texto a ser exibido.
             font=("Lemon Milk Negrito", 12),  # A fonte do texto.
-            fg="#7B6052",  # A cor do texto.
+            fg="#372115",  # A cor do texto.
             bg="#EADFC8",  # A cor de fundo do label.
             wraplength=350,  # Quebra a linha do texto após 350 pixels.
             justify='center'  # Centraliza o texto com quebra de linha.
@@ -194,7 +197,7 @@ class GuiTools:
             dialog,
             text="OK",  # O texto do botão.
             font=("Lemon Milk Negrito", 12),  # A fonte do botão.
-            bg="#7B6052",  # A cor de fundo do botão.
+            bg="#372115",  # A cor de fundo do botão.
             fg="#B3A298",  # A cor do texto do botão.
             borderwidth=0,  # A largura da borda.
             relief="raised",  # O estilo de relevo do botão.
