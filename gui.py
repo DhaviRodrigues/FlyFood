@@ -1,5 +1,5 @@
 from pathlib import Path
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage,Label
 from tkextrafont import Font
 import main
 arquivo_matriz = None
@@ -25,7 +25,7 @@ window.configure(bg = "#FFFFFF")
 
 # Este bloco 'try...except' carrega fontes customizadas de forma segura.
 try:
-    # Define os caminhos para os arquivos de fonte 'Poppins' regular e black.
+    # Define os caminhos para os arquivos de fonte.
     font_path_light_italic = Path(__file__).parent / "fonts" / "LEMONMILK-LightItalic.otf"
     font_path_negrito = Path(__file__).parent / "fonts" / "LEMONMILK-Bold.otf"
     
@@ -68,7 +68,7 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: main.GuiTools.selecionar_arquivo(),
+    command=lambda: main.RotasDrone.selecionar_arquivo(),
     relief="flat"
 )
 button_1.place(
@@ -84,7 +84,7 @@ button_2 = Button(
     image=button_image_2,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: main.RotasDrone.leitura_da_matriz(arquivo_matriz, window),
+    command=lambda: main.RotasDrone.imprimir_caminho(resultado, window),
     relief="flat"
 )
 button_2.place(
@@ -161,5 +161,6 @@ image_5 = canvas.create_image(
     249.0,
     image=image_image_5
 )
+texto_fantasma = Label(window, font=("Lemon Milk Negrito", 1))
 window.resizable(False, False)
 window.mainloop()

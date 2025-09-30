@@ -102,26 +102,9 @@ class RotasDrone:
                 melhor_rota = permut
 
         return f"{' '.join(melhor_rota)}"
-    
-
-    def leitura_da_matriz(arquivo_matriz, window):
-        if arquivo_matriz is None:
-            GuiTools.custom_messagebox(window, "Erro na seleção de arquivo", "Nenhum arquivo foi selecionado. Por favor, selecione um arquivo válido.")
-        else:
-
-            with open(arquivo_matriz, "r", encoding="utf-8") as f:
-                linhas_arquivo = f.read().splitlines()
-
-            linhas, colunas = map(int, linhas_arquivo[0].split())
-            matriz = [linha.split() for linha in linhas_arquivo[1:]]
-
-            drone = RotasDrone(linhas, colunas, matriz)
-            resultado = drone.calcularMelhorRota()
-            print(resultado)
-
-class GuiTools:
     def selecionar_arquivo():
     #Abre uma janela para o usuário selecionar um arquivo de arquivo txt.
+        resultado=None
         arquivo_matriz = None
         arquivo_matriz = filedialog.askopenfilename( # Abre a janela de seleção de arquivo.
             title="Selecione o caminho",
@@ -131,8 +114,39 @@ class GuiTools:
         if not arquivo_matriz: # Se o usuário cancelar a seleção, a função termina.
             return
         else:
-            return arquivo_matriz
+            
+            with open(arquivo_matriz, "r", encoding="utf-8") as f:
+                linhas_arquivo = f.read().splitlines()
+
+            linhas, colunas = map(int, linhas_arquivo[0].split())
+            matriz = [linha.split() for linha in linhas_arquivo[1:]]
+
+            drone = RotasDrone(linhas, colunas, matriz)
+            resultado = drone.calcularMelhorRota()
+            print(resultado)
+            return resultado
         
+    def imprimir_caminho(resultado,window):
+        if resultado is None:
+            GuiTools.custom_messagebox(window, "Erro na seleção de arquivo", "Nenhum arquivo foi selecionado. Por favor, selecione um arquivo válido.")
+    
+
+    # def leitura_da_matriz(arquivo_matriz, window):
+    #     if arquivo_matriz is None:
+    #         GuiTools.custom_messagebox(window, "Erro na seleção de arquivo", "Nenhum arquivo foi selecionado. Por favor, selecione um arquivo válido.")
+    #     else:
+
+    #         with open(arquivo_matriz, "r", encoding="utf-8") as f:
+    #             linhas_arquivo = f.read().splitlines()
+
+    #         linhas, colunas = map(int, linhas_arquivo[0].split())
+    #         matriz = [linha.split() for linha in linhas_arquivo[1:]]
+
+    #         drone = RotasDrone(linhas, colunas, matriz)
+    #         resultado = drone.calcularMelhorRota()
+    #         print(resultado)
+
+class GuiTools:
     def custom_messagebox(master,titulo, mensagem):
         """Exibe uma caixa de diálogo modal com mensagem e botão "OK".
         
