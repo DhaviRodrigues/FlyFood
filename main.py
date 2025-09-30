@@ -53,8 +53,8 @@ class RotasDrone:
         self.linhas = linhas
         self.colunas = colunas
         self.matriz = matriz
-        self.pontos = self.encontrarPontos()
-        self.inicio = self.pontos["R"]
+        self.pontos = self.encontrarPontos() if matriz else {}
+        self.inicio = self.pontos.get("R")
 
     def encontrarPontos(self):
         """
@@ -64,15 +64,15 @@ class RotasDrone:
             dict: Mapeamento {nome_ponto: PontoEntrega}.
         """
         pontos = {}
-        matriz_modelada = np.array(self.matriz) # transforma a matriz em um array do numpy
-        for (i,j), valor in np.ndenumerate(matriz_modelada):  # retorna pares (i,j) em cada elemento matricial
+        matriz_modelada = np.array(self.matriz)
+        for (i, j), valor in np.ndenumerate(matriz_modelada):
             if valor != "0":
                 pontos[valor] = PontoEntrega(valor, i, j)
         return pontos
 
-    def calcularMelhorRota(self):
+    def calcularMelhorRota(self, caminho_arquivo="matriz.txt"):
         """
-        Calcula a melhor rota de entregas, minimizando o custo total em distância Manhattan.
+        Lê a matriz de um arquivo txt e depois calcula a melhor rota depois de permutar por todos os caminhos possíveis(força bruta)
 
         O drone deve:
         - Sair do ponto inicial R
@@ -80,34 +80,42 @@ class RotasDrone:
         - Retornar ao ponto R no final
 
         Returns:
-            str: Sequência de pontos de entrega na ordem ótima.
+        - str: Sequência de pontos de entrega na ordem ótima.
         """
+
+        with open(caminho_arquivo, "r", encoding="utf-8") as f:
+            linhas_arquivo = f.read().splitlines()
+
+        linhas, colunas = map(int, linhas_arquivo[0].split())
+        matriz = [linha.split() for linha in linhas_arquivo[1:]]
+        self.linhas = linhas
+        self.colunas = colunas
+        self.matriz = matriz
+        self.pontos = self.encontrarPontos()
+        self.inicio = self.pontos["R"]
+
+        # Cálculo da rota ótima 
         pontos_entregas = [p for p in self.pontos if p != "R"]
-        menor_custo = float("inf")
+        menor_custo = float("inf") #Serve para validar os custos das rotas já calculadas como menores, pois inf é um valor muito grande.
         melhor_rota = None
 
-        for permut in it.permutations(pontos_entregas): #Permuta todos os possíveis caminhos dentre os pontos de entrega
+        for permut in it.permutations(pontos_entregas):
             custo = 0
-            atual = self.inicio #O primeiro ponto é o ponto inicial
+            atual = self.inicio
 
             for p in permut:
                 custo += atual.distanciaManhattan(self.pontos[p])
                 atual = self.pontos[p]
 
-            custo += atual.distanciaManhattan(self.inicio)  # retornar ao R
+            custo += atual.distanciaManhattan(self.inicio)  # voltar para R
 
             if custo < menor_custo:
                 menor_custo = custo
                 melhor_rota = permut
 
-        return f"{" ".join(melhor_rota)}"
+        return " ".join(melhor_rota)
 
-with open("arquivo_matriz", "r", encoding="utf-8") as f:
-    linhas_arquivo = f.read().splitlines()
-
-linhas, colunas = map(int, linhas_arquivo[0].split())
-matriz = [linha.split() for linha in linhas_arquivo[1:]]
-
-drone = RotasDrone(linhas, colunas, matriz)
-resultado = drone.calcularMelhorRota()
-print(resultado)
+# Aqui ocorre a execução para retorno do caminho
+if __name__ == "__main__":
+    drone = RotasDrone(0, 0, []) # Objeto instanciado que inicia vazio e represnta pontos específicos dentro da matriz para roteamento do caminho ótimo sem precisar da matriz pronta
+    print(drone.calcularMelhorRota("matriz.txt"))
