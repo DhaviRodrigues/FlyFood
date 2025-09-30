@@ -160,7 +160,7 @@ class GuiTools:
             text=mensagem,  # O texto a ser exibido.
             font=("Lemon Milk Negrito", 12),  # A fonte do texto.
             fg="#7B6052",  # A cor do texto.
-            bg="#B3A298",  # A cor de fundo do label.
+            bg="#EADFC8",  # A cor de fundo do label.
             wraplength=350,  # Quebra a linha do texto após 350 pixels.
             justify='center'  # Centraliza o texto com quebra de linha.
         )
