@@ -107,16 +107,17 @@ class RotasDrone:
     def leitura_da_matriz(arquivo_matriz, window):
         if arquivo_matriz is None:
             GuiTools.custom_messagebox(window, "Erro na seleção de arquivo", "Nenhum arquivo foi selecionado. Por favor, selecione um arquivo válido.")
+        else:
 
-        with open(arquivo_matriz, "r", encoding="utf-8") as f:
-            linhas_arquivo = f.read().splitlines()
+            with open(arquivo_matriz, "r", encoding="utf-8") as f:
+                linhas_arquivo = f.read().splitlines()
 
-        linhas, colunas = map(int, linhas_arquivo[0].split())
-        matriz = [linha.split() for linha in linhas_arquivo[1:]]
+            linhas, colunas = map(int, linhas_arquivo[0].split())
+            matriz = [linha.split() for linha in linhas_arquivo[1:]]
 
-        drone = RotasDrone(linhas, colunas, matriz)
-        resultado = drone.calcularMelhorRota()
-        print(resultado)
+            drone = RotasDrone(linhas, colunas, matriz)
+            resultado = drone.calcularMelhorRota()
+            print(resultado)
 
 class GuiTools:
     def selecionar_arquivo():
