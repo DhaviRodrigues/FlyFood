@@ -128,15 +128,16 @@ class RotasDrone:
             print(resultado)
             return resultado
         
-    def imprimir_caminho(resultado,window, entry):
+    def imprimir_caminho(resultado,window, label):
         print(resultado)
         if resultado is None:
             GuiTools.custom_messagebox(window, "Erro na seleção de arquivo", "Nenhum arquivo foi selecionado. Por favor, selecione um arquivo válido.")
         else:
-            entry.config(state="normal")
-            entry.insert("1.0", resultado)
-            entry.tag_add("center", "1.0", "end-1c")
-            entry.config(state="disabled")
+            # entry.config(state="normal")
+            # entry.insert("1.0", resultado)
+            # entry.tag_add("center", "1.0", "end-1c")
+            # entry.config(state="disabled")
+            label.config(text=resultado)
 
     
 
@@ -173,7 +174,7 @@ class GuiTools:
         dialog.update_idletasks()  # Força o Tkinter a renderizar a janela para que suas dimensões sejam conhecidas.
         
         width = 400  # Define a largura fixa da caixa.
-        height = 150  # Define a altura fixa da caixa.
+        height = 170  # Define a altura fixa da caixa.
         x = master.winfo_x() + (master.winfo_width() - width) // 2  # Calcula a coordenada X para centralizar a caixa.
         y = master.winfo_y() + (master.winfo_height() - height) // 2  # Calcula a coordenada Y para centralizar a caixa.
         dialog.geometry(f'{width}x{height}+{x}+{y}')  # Aplica o tamanho e a posição calculados.
@@ -181,7 +182,7 @@ class GuiTools:
         label = Label(
             dialog,
             text=mensagem,  # O texto a ser exibido.
-            font=("Lemon Milk Negrito", 12),  # A fonte do texto.
+            font=("LEMONMILK-Bold", 11),  # A fonte do texto.
             fg="#372115",  # A cor do texto.
             bg="#EADFC8",  # A cor de fundo do label.
             wraplength=350,  # Quebra a linha do texto após 350 pixels.
@@ -196,14 +197,14 @@ class GuiTools:
         ok_button = Button( # Cria um botão "OK" na caixa de diálogo.
             dialog,
             text="OK",  # O texto do botão.
-            font=("Lemon Milk Negrito", 12),  # A fonte do botão.
+            font=("LEMONMILK-Bold", 12),  # A fonte do botão.
             bg="#372115",  # A cor de fundo do botão.
             fg="#B3A298",  # A cor do texto do botão.
             borderwidth=0,  # A largura da borda.
             relief="raised",  # O estilo de relevo do botão.
             padx=10,
-            pady=3,
-            width=6,  # A largura do botão.
+            pady=6,
+            width=3,  # A largura do botão.
             command=dialog.destroy  # Define que o comando do botão é fechar a própria caixa.
         )
 

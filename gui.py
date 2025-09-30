@@ -2,8 +2,14 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage,Label
 from tkextrafont import Font
 import main
+import webbrowser
 
 resultado = None
+
+def abrir_link_github():
+    """Abre o link do repositório do projeto no GitHub em uma nova aba do navegador."""
+    url = "https://github.com/DhaviRodrigues/FlyFood" # Define a URL do repositório.
+    webbrowser.open_new_tab(url) # Abre a URL em uma nova aba.
 
 def armazenar_resultado(window):
     global resultado
@@ -34,14 +40,11 @@ try:
     font_path_light_italic = Path(__file__).parent / "fonts" / "LEMONMILK-LightItalic.otf"
     font_path_negrito = Path(__file__).parent / "fonts" / "LEMONMILK-Bold.otf"
     
-    # Carrega os arquivos de fonte
-    window.font_lemonmilk_light_italic = Font(file=font_path_light_italic, family="Lemon Milk Light Italic")
-    window.font_lemonmilk_bold = Font(file=font_path_negrito, family="Lemon Milk Negrito")
+    Font(file=font_path_light_italic)
+    Font(file=font_path_negrito)
     
-    # Imprime uma mensagem que confirma que as fontes foram carregadas com sucesso.
     print("Fontes carregadas com sucesso.")
 
-# Se ocorrer qualquer erro no bloco 'try' (ex: arquivo não encontrado)...
 except Exception as e:
     print(f"Erro ao carregar fontes: {e}. A usar fontes padrão.")
     # E define fontes do padrão do sistema para garantir que a aplicação continue funcionando.
@@ -89,7 +92,7 @@ button_2 = Button(
     image=button_image_2,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: main.RotasDrone.imprimir_caminho(resultado, window, entry_1),
+    command=lambda: main.RotasDrone.imprimir_caminho(resultado, window, label_1),
     relief="flat"
 )
 button_2.place(
@@ -119,7 +122,7 @@ entry_1 = Text(
     bg="#B3A298",
     fg="#372115",
     highlightthickness=0,
-    font=("Lemon Milk Negrito", 32),
+    font=("LEMONMILK-Bold", 32),
 )
 entry_1.place(
     x=730.0,
@@ -131,13 +134,28 @@ entry_1.place(
 entry_1.tag_configure("center", justify="center")
 entry_1.config(state="disabled")
 
+label_1 = Label(
+    bd=0,
+    bg="#B3A298",
+    fg="#372115",
+    highlightthickness=0,
+    font=("LEMONMILK-Bold", 32),
+    text="",  # O texto começa vazio
+)
+label_1.place(
+    x=730.0,
+    y=180.0,
+    width=250.0,
+    height=125.0,
+)
+
 button_image_3 = PhotoImage(
     file=relative_to_assets("button_3.png"))
 button_3 = Button(
     image=button_image_3,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("Site do github"),
+    command=lambda: abrir_link_github(),
     relief="flat"
 )
 button_3.place(
@@ -162,6 +180,6 @@ image_5 = canvas.create_image(
     249.0,
     image=image_image_5
 )
-texto_fantasma = Label(window, font=("Lemon Milk Negrito", 1))
+texto_fantasma = Label(window, font=("LEMONMILK-Bold", 1))
 window.resizable(False, False)
 window.mainloop()
