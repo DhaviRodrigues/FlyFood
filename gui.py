@@ -2,6 +2,7 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 from tkextrafont import Font
 import main
+arquivo_matriz = None
 
 def relative_to_assets(path: str) -> Path:
     """Monta um caminho absoluto para um arquivo de asset, facilitando o acesso."""
@@ -25,15 +26,15 @@ window.configure(bg = "#FFFFFF")
 # Este bloco 'try...except' carrega fontes customizadas de forma segura.
 try:
     # Define os caminhos para os arquivos de fonte 'Poppins' regular e black.
-    font_path_light_italic = Path(__file__).parent / "fonts" / "LEMONMILK-LightItalic.ttf"
-    font_path_negrito = Path(__file__).parent / "fonts" / "LEMONMILK-Bold.ttf"
+    font_path_light_italic = Path(__file__).parent / "fonts" / "LEMONMILK-LightItalic.otf"
+    font_path_negrito = Path(__file__).parent / "fonts" / "LEMONMILK-Bold.otf"
     
     # Carrega os arquivos de fonte
     window.font_lemonmilk_light_italic = Font(file=font_path_light_italic, family="Lemon Milk Light Italic")
     window.font_lemonmilk_bold = Font(file=font_path_negrito, family="Lemon Milk Negrito")
     
     # Imprime uma mensagem que confirma que as fontes foram carregadas com sucesso.
-    print("Fontes 'Poppins' carregadas com sucesso.")
+    print("Fontes carregadas com sucesso.")
 
 # Se ocorrer qualquer erro no bloco 'try' (ex: arquivo não encontrado)...
 except Exception as e:
@@ -83,7 +84,7 @@ button_2 = Button(
     image=button_image_2,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_2 clicked"),
+    command=lambda: main.RotasDrone.leitura_da_matriz(arquivo_matriz, window),
     relief="flat"
 )
 button_2.place(
@@ -135,7 +136,7 @@ button_3 = Button(
     image=button_image_3,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_3 clicked"),
+    command=lambda: print("Site do github"),
     relief="flat"
 )
 button_3.place(

@@ -101,31 +101,36 @@ class RotasDrone:
                 menor_custo = custo
                 melhor_rota = permut
 
-        return f"{" ".join(melhor_rota)}"
+        return f"{' '.join(melhor_rota)}"
+    
 
-with open("arquivo_matriz", "r", encoding="utf-8") as f:
-    linhas_arquivo = f.read().splitlines()
+    def leitura_da_matriz(arquivo_matriz, window):
+        if arquivo_matriz is None:
+            GuiTools.custom_messagebox(window, "Erro na seleção de arquivo", "Nenhum arquivo foi selecionado. Por favor, selecione um arquivo válido.")
 
-linhas, colunas = map(int, linhas_arquivo[0].split())
-matriz = [linha.split() for linha in linhas_arquivo[1:]]
+        with open(arquivo_matriz, "r", encoding="utf-8") as f:
+            linhas_arquivo = f.read().splitlines()
 
-drone = RotasDrone(linhas, colunas, matriz)
-resultado = drone.calcularMelhorRota()
-print(resultado)
+        linhas, colunas = map(int, linhas_arquivo[0].split())
+        matriz = [linha.split() for linha in linhas_arquivo[1:]]
+
+        drone = RotasDrone(linhas, colunas, matriz)
+        resultado = drone.calcularMelhorRota()
+        print(resultado)
 
 class GuiTools:
     def selecionar_arquivo():
     #Abre uma janela para o usuário selecionar um arquivo de arquivo txt.
-        matriz = None
-        matriz = filedialog.askopenfilename( # Abre a janela de seleção de arquivo.
+        arquivo_matriz = None
+        arquivo_matriz = filedialog.askopenfilename( # Abre a janela de seleção de arquivo.
             title="Selecione o caminho",
             filetypes=[("Ficheiros de Texto", "*.txt")] #Exemplo "*.txt"
         )
 
-        if not matriz: # Se o usuário cancelar a seleção, a função termina.
+        if not arquivo_matriz: # Se o usuário cancelar a seleção, a função termina.
             return
         else:
-            return matriz
+            return arquivo_matriz
         
     def custom_messagebox(master,titulo, mensagem):
         """Exibe uma caixa de diálogo modal com mensagem e botão "OK".
