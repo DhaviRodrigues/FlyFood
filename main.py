@@ -102,7 +102,7 @@ class RotasDrone:
                 melhor_rota = permut
 
         return f"{' '.join(melhor_rota)}"
-    def selecionar_arquivo():
+    def selecionar_arquivo(window):
     #Abre uma janela para o usuário selecionar um arquivo de arquivo txt.
         resultado=None
         arquivo_matriz = None
@@ -123,12 +123,18 @@ class RotasDrone:
 
             drone = RotasDrone(linhas, colunas, matriz)
             resultado = drone.calcularMelhorRota()
+        if resultado:
+            GuiTools.custom_messagebox(window, "Arquivo carregado com sucesso", "O arquivo selecionado foi carregado com sucesso.")
             print(resultado)
             return resultado
         
-    def imprimir_caminho(resultado,window):
+    def imprimir_caminho(resultado,window, entry):
+        print(resultado)
         if resultado is None:
             GuiTools.custom_messagebox(window, "Erro na seleção de arquivo", "Nenhum arquivo foi selecionado. Por favor, selecione um arquivo válido.")
+        else:
+            entry.delete("1.0", "end")
+            entry.insert("1.0", resultado)
     
 
     # def leitura_da_matriz(arquivo_matriz, window):
@@ -164,7 +170,7 @@ class GuiTools:
         dialog.update_idletasks()  # Força o Tkinter a renderizar a janela para que suas dimensões sejam conhecidas.
         
         width = 400  # Define a largura fixa da caixa.
-        height = 200  # Define a altura fixa da caixa.
+        height = 150  # Define a altura fixa da caixa.
         x = master.winfo_x() + (master.winfo_width() - width) // 2  # Calcula a coordenada X para centralizar a caixa.
         y = master.winfo_y() + (master.winfo_height() - height) // 2  # Calcula a coordenada Y para centralizar a caixa.
         dialog.geometry(f'{width}x{height}+{x}+{y}')  # Aplica o tamanho e a posição calculados.

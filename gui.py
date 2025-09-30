@@ -2,7 +2,9 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage,Label
 from tkextrafont import Font
 import main
-arquivo_matriz = None
+
+global resultado
+resultado=None
 
 def relative_to_assets(path: str) -> Path:
     """Monta um caminho absoluto para um arquivo de asset, facilitando o acesso."""
@@ -68,7 +70,7 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: main.RotasDrone.selecionar_arquivo(),
+    command=lambda: main.RotasDrone.selecionar_arquivo(window),
     relief="flat"
 )
 button_1.place(
@@ -84,7 +86,7 @@ button_2 = Button(
     image=button_image_2,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: main.RotasDrone.imprimir_caminho(resultado, window),
+    command=lambda: main.RotasDrone.imprimir_caminho(resultado, window, entry_1),
     relief="flat"
 )
 button_2.place(
