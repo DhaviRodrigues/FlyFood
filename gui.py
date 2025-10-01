@@ -77,7 +77,8 @@ button_1 = Button(
     borderwidth=0,
     highlightthickness=0,
     command=lambda: armazenar_resultado(window),
-    relief="flat"
+    relief="flat",
+    activebackground="#7B6052"
 )
 button_1.place(
     x=92.0,
@@ -93,7 +94,8 @@ button_2 = Button(
     borderwidth=0,
     highlightthickness=0,
     command=lambda: main.RotasDrone.imprimir_caminho(resultado, window, label_1),
-    relief="flat"
+    relief="flat",
+    activebackground="#7B6052"
 )
 button_2.place(
     x=740.0,
@@ -156,7 +158,8 @@ button_3 = Button(
     borderwidth=0,
     highlightthickness=0,
     command=lambda: abrir_link_github(),
-    relief="flat"
+    relief="flat",
+    activebackground="#7B6052"
 )
 button_3.place(
     x=432.0,
