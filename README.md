@@ -15,6 +15,8 @@ Este projeto integra conhecimentos de **estrutura de dados**, **algoritmos heur√
 
 ---
 
+</div>
+
 ## Funcionalidades
 
 - Leitura de arquivos de entrada `.txt` ou `.xxx` contendo a matriz de dados.  
