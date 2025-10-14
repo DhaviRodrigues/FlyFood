@@ -136,7 +136,7 @@ class RotasDrone:
         if resultado:
             GuiTools.custom_messagebox(window, "Arquivo carregado com sucesso", "A melhor rota foi calculada, clique no botão Gerar Caminho para visualizar o resultado.")
             return resultado
-        
+
     def imprimir_caminho(resultado,window, label):
         print(resultado)
         if resultado is None:
@@ -146,10 +146,10 @@ class RotasDrone:
             # entry.insert("1.0", resultado)
             # entry.tag_add("center", "1.0", "end-1c")
             # entry.config(state="disabled")
-            label.config(text=resultado)
+            tamanho_fonte = GuiTools.tamanho_caminho(resultado)
+            label.config(text=resultado, font=("LEMONMILK-Bold", tamanho_fonte))
 
     
-
     # def leitura_da_matriz(arquivo_matriz, window):
     #     if arquivo_matriz is None:
     #         GuiTools.custom_messagebox(window, "Erro na seleção de arquivo", "Nenhum arquivo foi selecionado. Por favor, selecione um arquivo válido.")
@@ -311,3 +311,18 @@ class GuiTools:
         master.wait_window(dialog)  # Pausa a janela mestre até que esta seja fechada.
         
         return dialog.result  # Retorna o resultado (True ou False) que foi definido.
+    
+    def tamanho_caminho(resultado):
+        tamanho = 32
+        if resultado:
+            resultado_sem_espacos = resultado.replace(" ", "")
+            comprimento = len(resultado_sem_espacos)
+            if comprimento <= 5:
+                tamanho = 32
+            elif 5 < comprimento <= 8:
+                tamanho = 20
+            elif 8 < comprimento <= 12:
+                tamanho = 12
+            elif comprimento > 12:
+                tamanho = 8
+        return tamanho
