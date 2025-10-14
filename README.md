@@ -28,6 +28,15 @@ Este projeto integra conhecimentos de **estrutura de dados**, **algoritmos heur�
 
 ---
 
+## Biblotecas Necessárias
+
+- TkExtraFont
+- pathlib 
+- webbrowser
+- itertools
+- numpy
+- Tkinter
+
 ## 🗂️ Estrutura do Projeto
 
 ```text
@@ -41,15 +50,3 @@ FlyFood/
 ├── main.py               # Funções de Busca
 ├── requisitos.txt        # Lista de dependências
 └── README.md
-```text
-
----
-
-## Biblotecas Necessárias
-
-- TkExtraFont
-- pathlib 
-- webbrowser
-- itertools
-- numpy
-- Tkinter
