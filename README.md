@@ -41,3 +41,12 @@ FlyFood/
 ├── main.py               # Funções de Busca
 ├── requisitos.txt        # Lista de dependências
 └── README.md
+
+## Biblotecas Necessárias
+
+- TkExtraFont
+- pathlib 
+- webbrowser
+- itertools
+- numpy
+- Tkinter
