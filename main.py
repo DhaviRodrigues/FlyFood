@@ -71,7 +71,7 @@ class RotasDrone:
                 pontos[valor] = PontoEntrega(valor, i, j)
         return pontos
 
-    def calcularMelhorRota(self):
+    def calcularMelhorRota(self,window):
         """
         Calcula a melhor rota de entregas, minimizando o custo total em distância Manhattan.
 
@@ -84,6 +84,12 @@ class RotasDrone:
             str: Sequência de pontos de entrega na ordem ótima.
         """
         pontos_entregas = [p for p in self.pontos if p != "R"]
+        if len(pontos_entregas) == 11:
+            GuiTools.custom_messagebox(window, "Aviso", "O cálculo pode demorar alguns minutos para ser concluído.")
+        if len(pontos_entregas) > 11:
+            if not GuiTools.custom_yn(window, "Aviso", "Ao utilizar o programa com 12 pontos de entrega ou mais, o tempo de cálculo será consideravelmente maior (horas), deseja continuar?"):
+                return
+        
         menor_custo = float("inf")
         melhor_rota = None
 
@@ -119,13 +125,16 @@ class RotasDrone:
                 linhas_arquivo = f.read().splitlines()
 
             linhas, colunas = map(int, linhas_arquivo[0].split())
+            if linhas > 15 or colunas > 15:
+                GuiTools.custom_messagebox(window, "Aviso", "O programa não suporta matrizes maiores que 12 X 12.")
+                return
+            
             matriz = [linha.split() for linha in linhas_arquivo[1:]]
 
             drone = RotasDrone(linhas, colunas, matriz)
-            resultado = drone.calcularMelhorRota()
+            resultado = drone.calcularMelhorRota(window)
         if resultado:
-            GuiTools.custom_messagebox(window, "Arquivo carregado com sucesso", "O arquivo selecionado foi carregado com sucesso.")
-            print(resultado)
+            GuiTools.custom_messagebox(window, "Arquivo carregado com sucesso", "A melhor rota foi calculada, clique no botão Gerar Caminho para visualizar o resultado.")
             return resultado
         
     def imprimir_caminho(resultado,window, label):
@@ -215,3 +224,90 @@ class GuiTools:
         dialog.transient(master)  # Associa a caixa à janela mestre (exemplo minimiza junto).
         dialog.grab_set()  # Torna a caixa de diálogo modal (bloqueia a janela de trás).
         dialog.wait_window()  # Pausa o código aqui até que a 'dialog' seja fechada.
+
+    def sim_ou_nao(dialog, resultado):
+        """
+        Função auxiliar que define o resultado e fecha a janela.
+        """
+        dialog.result = resultado  # Atribui o resultado a um atributo da janela de diálogo.
+        dialog.destroy()  # Fecha a janela de diálogo.
+
+
+    def custom_yn(master, titulo, mensagem):
+        """
+        Cria uma caixa de diálogo Sim/Não, para confirmar decisões importantes do usuário.
+        """
+        dialog = Toplevel(master)  # Cria a janela de diálogo.
+        dialog.title(titulo)  # Define seu título.
+        dialog.configure(bg="#EADFC8")  # Define sua cor de fundo.
+        dialog.resizable(False, False)  # Impede seu redimensionamento.
+
+        dialog.result = False  # Define um resultado padrão (será alterado se "Sim" for clicado).
+
+        dialog.update_idletasks()  # Força a renderização para obter as dimensões corretas.
+        
+        width = 400  # Largura fixa.
+        height = 150  # Altura inicial.
+        x = master.winfo_x() + (master.winfo_width() - width) // 2  # Calcula a posição X.
+        y = master.winfo_y() + (master.winfo_height() - height) // 2  # Calcula a posição Y.
+        dialog.geometry(f'{width}x{height}+{x}+{y}')  # Aplica a geometria inicial.
+
+        label = Label(
+            dialog,
+            text=mensagem,  # O texto a ser exibido.
+            font=("LEMONMILK-Bold", 11),  # A fonte do texto.
+            fg="#372115",  # A cor do texto.
+            bg="#EADFC8",  # A cor de fundo do label.
+            wraplength=350,  # Quebra a linha do texto após 350 pixels.
+            justify='center'  # Centraliza o texto com quebra de linha.
+        )
+
+        label.pack(pady=(20, 10), padx=20, expand=True, fill='both')  # Adiciona o label.
+
+        button_frame = Frame(dialog, bg="#EADFC8")  # Cria um Frame para agrupar os botões horizontalmente.
+        button_frame.pack(pady=(0, 20))  # Adiciona o frame à janela.
+
+        sim_button = Button(
+            button_frame,
+            text="Sim", # Define o texto do botão "Sim".
+            font=("LEMONMILK-Bold", 12),  # A fonte do botão.
+            bg="#372115",  # A cor de fundo do botão.
+            fg="#B3A298",  # A cor do texto do botão.
+            borderwidth=0,  # A largura da borda.
+            relief="raised",  # O estilo de relevo do botão.
+            padx=10,
+            pady=6,
+            width=3,
+            command=lambda: GuiTools.sim_ou_nao(dialog, True)  # Ao clicar, chama a função auxiliar com o resultado True.
+        )
+
+        sim_button.pack(side='left', padx=(0, 15))  # Posiciona o botão à esquerda dentro do frame.
+
+        nao_button = Button(
+            button_frame,
+            text="Não", # Define o texto do botão "Não".
+            font=("LEMONMILK-Bold", 12),  # A fonte do botão.
+            bg="#372115",  # A cor de fundo do botão.
+            fg="#B3A298",  # A cor do texto do botão.
+            borderwidth=0,  # A largura da borda.
+            relief="raised",  # O estilo de relevo do botão.
+            padx=10,
+            pady=6,
+            width=3,
+            command=lambda: GuiTools.sim_ou_nao(dialog, False)  # Ao clicar, chama a função auxiliar com o resultado False.
+        )
+        nao_button.pack(side='left')  # Posiciona o botão à esquerda, ao lado do botão "Sim".
+
+        width = 400  # Define a largura novamente para o cálculo final.
+        height = dialog.winfo_reqheight()  # Pega a altura mínima requerida pelos widgets para um ajuste perfeito.
+        
+        x = master.winfo_x() + (master.winfo_width() - width) // 2  # Recalcula a posição X.
+        y = master.winfo_y() + (master.winfo_height() - height) // 2  # Recalcula a posição Y com a nova altura.
+        
+        dialog.geometry(f'{width}x{height}+{x}+{y}')  # Aplica a nova geometria com a altura ajustada.
+        
+        dialog.transient(master)  # Associa a caixa à janela mestre.
+        dialog.grab_set()  # Bloqueia a janela de trás.
+        master.wait_window(dialog)  # Pausa a janela mestre até que esta seja fechada.
+        
+        return dialog.result  # Retorna o resultado (True ou False) que foi definido.

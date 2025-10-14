@@ -168,6 +168,23 @@ button_3.place(
     height=16.0
 )
 
+button_image_4 = PhotoImage(
+    file=relative_to_assets("button_4.png"))
+button_4 = Button(
+    image=button_image_4,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: abrir_link_github(),
+    relief="flat",
+    activebackground="#7B6052"
+)
+button_4.place(
+    x=790.0,
+    y=430.0,
+    width=136.0,
+    height=57.0
+)
+
 image_image_4 = PhotoImage(
     file=relative_to_assets("image_4.png"))
 image_4 = canvas.create_image(
