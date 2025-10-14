@@ -41,6 +41,9 @@ FlyFood/
 ├── main.py               # Funções de Busca
 ├── requisitos.txt        # Lista de dependências
 └── README.md
+```text
+
+---
 
 ## Biblotecas Necessárias
 
