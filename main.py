@@ -120,7 +120,6 @@ class RotasDrone:
         if not arquivo_matriz: # Se o usuário cancelar a seleção, a função termina.
             return
         else:
-            
             with open(arquivo_matriz, "r", encoding="utf-8") as f:
                 linhas_arquivo = f.read().splitlines()
 
@@ -142,28 +141,8 @@ class RotasDrone:
         if resultado is None:
             GuiTools.custom_messagebox(window, "Erro na seleção de arquivo", "Nenhum arquivo foi selecionado. Por favor, selecione um arquivo válido.")
         else:
-            # entry.config(state="normal")
-            # entry.insert("1.0", resultado)
-            # entry.tag_add("center", "1.0", "end-1c")
-            # entry.config(state="disabled")
             tamanho_fonte = GuiTools.tamanho_caminho(resultado)
             label.config(text=resultado, font=("LEMONMILK-Bold", tamanho_fonte))
-
-    
-    # def leitura_da_matriz(arquivo_matriz, window):
-    #     if arquivo_matriz is None:
-    #         GuiTools.custom_messagebox(window, "Erro na seleção de arquivo", "Nenhum arquivo foi selecionado. Por favor, selecione um arquivo válido.")
-    #     else:
-
-    #         with open(arquivo_matriz, "r", encoding="utf-8") as f:
-    #             linhas_arquivo = f.read().splitlines()
-
-    #         linhas, colunas = map(int, linhas_arquivo[0].split())
-    #         matriz = [linha.split() for linha in linhas_arquivo[1:]]
-
-    #         drone = RotasDrone(linhas, colunas, matriz)
-    #         resultado = drone.calcularMelhorRota()
-    #         print(resultado)
 
 class GuiTools:
     def custom_messagebox(master,titulo, mensagem):
