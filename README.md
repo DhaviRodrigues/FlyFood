@@ -19,7 +19,7 @@ Este projeto integra conhecimentos de **estrutura de dados**, **algoritmos heur�
 
 ## Funcionalidades
 
-- Leitura de arquivos de entrada `.txt` ou `.xxx` contendo a matriz de dados.  
+- Leitura de arquivos de entrada `.txt` contendo a matriz de dados.  
 - Identificação automática de **origem e destino**.  
 - Geração e exibição de caminhos válidos.  
 - Cálculo de custo total e distância percorrida.  
