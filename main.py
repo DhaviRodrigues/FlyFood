@@ -1,113 +1,267 @@
 import itertools as it
 from tkinter import Label, PhotoImage, Toplevel, Button, Frame, filedialog
-import numpy as np
+import random
 
-class PontoEntrega:
-    
-    def __init__(self, nome_ponto, x, y):
-        self.nome_ponto = nome_ponto # Representa os possíveis nomes: A,B,C,D ou R dos objetos pontos criados
-        self.x = x #Distância Horizontal
-        self.y = y #Distância Vertical
-
+class LeituraTsp:
+    def __init__(self, caminho_arquivo, num_cidades):
         """
-        Representa um ponto de entrega ou o ponto inicial (R) dentro da matriz.
+        Inicializa o leitor do arquivo TSP.
+
+        Parâmetros:
+            caminho_arquivo (str): Caminho para o arquivo contendo a matriz TSP.
+            num_cidades (int): Quantidade de cidades a serem lidas.
 
         Atributos:
-        nome_ponto (str): Identificação do ponto (ex: A, B, C, D, R).
-        x (int): Coordenada da linha na matriz.
-        y (int): Coordenada da coluna na matriz.
+            valores_linhas (list[list[int]]): Linhas do formato triangular superior.
+            distancias (dict): Dicionário {(i,j): custo} simétrico.
         """
+        self.caminho = caminho_arquivo
+        self.n = num_cidades
+        self.valores_linhas, self.distancias = self.lerArquivoTsp()
 
-    def distanciaManhattan(self, outro_ponto):
+    def lerArquivoTsp(self):
         """
-        Calcula a distância Manhattan até outro ponto.
+        Lê um arquivo TSP no formato UPPER_ROW (apenas números).
 
-        A distância de Manhattan:
-        |x1 - x2| + |y1 - y2|, ou seja, apenas movimentos horizontais e verticais.
-
-        Args:
-            outro_ponto (PontoEntrega): Outro ponto da matriz.
-
-        Returns:
-            int: Distância de Manhattan entre este ponto e o outro.
+        Retorna:
+            tuple:
+                - valores_linhas (list[list[int]]): Linhas do arquivo representando
+                  os valores acima da diagonal principal.
+                - distancias (dict): Dicionário contendo a matriz de distâncias
+                  completa no formato {(i, j): valor}.
         """
-        #Garante que as linhas com pesos sejam calculadas em distância manhattan e como inteiros >= 0 e cálcula quantos passos horizontais e verticais são necessários para percorrer os caminhos
-        dx = self.x - outro_ponto.x
-        if dx < 0:
-            dx = -dx
-        dy = self.y - outro_ponto.y
-        if dy < 0:
-            dy = -dy
-        return dx + dy
+        with open(self.caminho, "r") as f:
+            espacos = f.read().split()
 
-class RotasDrone:
+        numeros = [int(elemento) for elemento in espacos] #Converte cada elemento string da matriz em inteiro
+        # calcula quantos números deveriam existir para uma matriz triangular superior n x n
+        numeros_esperados = self.n * (self.n - 1) // 2
+        if len(numeros) < numeros_esperados:
+            raise ValueError("Arquivo tem menos números que o esperado.")
 
-    def __init__(self, linhas, colunas, matriz):
+        valores_linhas = [] # lista que conterá cada linha do triângulo superior (lista de listas)
+        idx = 0
+                
+
+        for i in range(self.n): # para cada linha i do triângulo superior (i = 0 .. n-1)
+            tam = self.n - i - 1
+            linha = numeros[idx: idx + tam] # extrai a fatia correspondente à linha i para cada linha da matriz
+            valores_linhas.append(linha) # adiciona a linha à lista de linhas
+            idx += tam #Incrementa o indice para avançar para as outras fatias de linha
+
+        distancias = {} #Dicionário completo com as distâncias, incluindo as simétricas
+        # percorre cada linha construída e preenche distancias[(i,j)] e distancias[(j,i)] que seria a distância simétrica
+        for i in range(self.n):
+            # distância da cidade para ela mesma = 0
+            distancias[(i, i)] = 0
+            for k, val in enumerate(valores_linhas[i]):
+                j = i + 1 + k
+                distancias[(i, j)] = val # preenche a distância (i,j)
+                distancias[(j, i)] = val # Distância simétrica
+
+        return valores_linhas, distancias
+
+
+class AlgoritmoGenetico:
+    def __init__(self, dados_matriz: LeituraTsp,
+                 tamanho_populacao=120,
+                 geracoes=200,
+                 taxa_mutacao=0.1,
+                 elitismo=True,
+                 torneio_k=3):
         """
-        Inicializa o problema do drone a partir da matriz.
+        Inicializa um algoritmo genético configurado para resolver o TSP.
 
-        Args:
-            linhas (int): Número de linhas da matriz.
-            colunas (int): Número de colunas da matriz.
-            matriz (list[list[str]]): Matriz com pontos de entrega e ponto inicial.
+        Parâmetros:
+            dados_matriz (LeituraTsp): Objeto contendo matriz de distâncias.
+            tamanho_populacao (int): Quantidade de indivíduos na população.
+            geracoes (int): Número de gerações.
+            taxa_mutacao (float): Probabilidade de mutação.
+            elitismo (bool): Se True, preserva o melhor_individuo indivíduo de cada geração.
+            torneio_k (int): Número de competidores na seleção por torneio.
         """
-        self.linhas = linhas
-        self.colunas = colunas
-        self.matriz = matriz
-        self.pontos = self.encontrarPontos()
-        self.inicio = self.pontos["R"]
+        self.dist = dados_matriz.distancias # dicionário {(i,j): custo}
+        self.n = dados_matriz.n # número de cidades
 
-    def encontrarPontos(self):
+        self.tamanho_populacao = tamanho_populacao
+        self.geracoes = geracoes
+        self.taxa_mutacao = taxa_mutacao
+        self.elitismo = elitismo
+        self.torneio_k = torneio_k
+
+    def calcularCusto(self, perm):
         """
-        Localiza todos os pontos de interesse na matriz e os armazena em um dicionário.
+        Calcula o custo total de um percurso TSP fechado.
 
-        Returns:
-            dict: Mapeamento {nome_ponto: PontoEntrega}.
+        Parâmetros:
+            perm (list[int]): Permutação representando uma solução TSP.
+
+        Retorna:
+            int: Custo total do caminho.
         """
-        pontos = {}
-        matriz_modelada = np.array(self.matriz) # transforma a matriz em um array do numpy
-        for (i,j), valor in np.ndenumerate(matriz_modelada):  # retorna pares (i,j) em cada elemento matricial
-            if valor != "0":
-                pontos[valor] = PontoEntrega(valor, i, j)
-        return pontos
+        total = 0
+        # soma os custos entre pares de cidades consecutivas
+        for i in range(len(perm) - 1):
+            # adiciona o custo do último para o primeiro (fechamento do ciclo)
+            total += self.dist[(perm[i], perm[i+1])]
+        total += self.dist[(perm[-1], perm[0])]
+        return total
 
-    def calcularMelhorRota(self,window):
+    def calcularFitness(self, individuo): #Quanto menor o custo, então maior será o fitness
         """
-        Calcula a melhor rota de entregas, minimizando o custo total em distância Manhattan.
+        Calcula o fitness do indivíduo como 1 / (1 + custo).
 
-        O drone deve:
-        - Sair do ponto inicial R
-        - Visitar todos os pontos de entrega em alguma ordem
-        - Retornar ao ponto R no final
+        Parâmetros:
+            individuo (list[int]): Permutação representando uma solução.
 
-        Returns:
-            str: Sequência de pontos de entrega na ordem ótima.
+        Retorna:
+            float: Fitness (quanto maior, melhor_individuo).
         """
-        pontos_entregas = [p for p in self.pontos if p != "R"]
-        if len(pontos_entregas) == 11:
-            GuiTools.custom_messagebox(window, "Aviso", "O cálculo pode demorar alguns minutos para ser concluído.")
-        if len(pontos_entregas) > 11:
-            if not GuiTools.custom_yn(window, "Aviso", "Ao utilizar o programa com 12 pontos de entrega ou mais, o tempo de cálculo será consideravelmente maior (horas), deseja continuar?"):
-                return
-        
-        menor_custo = float("inf")
-        melhor_rota = None
+        return 1.0 / (1.0 + self.calcularCusto(individuo))
 
-        for permut in it.permutations(pontos_entregas): #Permuta todos os possíveis caminhos dentre os pontos de entrega
-            custo = 0
-            atual = self.inicio #O primeiro ponto é o ponto inicial
+    def inicializarPopulacao(self):
+        """
+        Cria a população inicial embaralhando permutações das cidades.
 
-            for p in permut:
-                custo += atual.distanciaManhattan(self.pontos[p])
-                atual = self.pontos[p]
+        Retorna:
+            list[list[int]]: População inicial com indivíduos aleatórios.
+        """
+        cidades = list(range(self.n))
+        populacao = []
+        for _ in range(self.tamanho_populacao):
+            individuo = cidades[:] #copia a lista de cidades
+            random.shuffle(individuo) # embaralha para criar uma permutação
+            populacao.append(individuo) # adiciona à população
+        return populacao
 
-            custo += atual.distanciaManhattan(self.inicio)  # retornar ao R
+    def selecaoTorneio(self, populacao):
+        """
+        Seleciona um indivíduo por torneio.
 
-            if custo < menor_custo:
-                menor_custo = custo
-                melhor_rota = permut
+        Parâmetros:
+            populacao (list[list[int]]): População atual.
 
-        return f"{' '.join(melhor_rota)}"
+        Retorna:
+            list[int]: Indivíduo vencedor do torneio.
+        """
+        # escolhe K competidores distintos da população
+        competidores = random.sample(populacao, self.torneio_k)
+        # calculamos (fitness, individuo) para cada e pegamos o maior pela tupla
+        return max((self.calcularFitness(ind), ind) for ind in competidores)[1]
+
+    def crossoverOx(self, p1, p2):
+        """
+        Aplica o operador de crossover OX (Order Crossover).
+
+        Parâmetros:
+            p1 (list[int]): Pai 1.
+            p2 (list[int]): Pai 2.
+
+        Retorna:
+            list[int]: Novo indivíduo gerado pelo crossover.
+        """
+        n = len(p1)
+
+        a, b = sorted(random.sample(range(n), 2)) # sorteia dois índices e os ordena para obter o segmento contínuo
+
+        filho = [None] * n   # cria o filho com posições vazias (None)
+
+
+        for i in range(a, b + 1):
+            filho[i] = p1[i]
+
+        idx = (b + 1) % n # posição de inserção no filho (a seguir ao segmento copiado)
+
+        for gene in p2[b + 1:] + p2[:b + 1]: # percorre os genes do pai2 a partir de b+1 (circular)
+            if gene not in filho:
+                filho[idx] = gene
+                idx = (idx + 1) % n
+
+        return filho
+
+    def mutacaoSwap(self, individuo):
+        """
+        Aplica mutação do tipo swap entre duas posições do indivíduo.
+
+        Parâmetros:
+            individuo (list[int]): Indivíduo a ser mutado.
+
+        Retorna:
+            list[int]: Indivíduo possivelmente mutado.
+        """
+        if random.random() < self.taxa_mutacao:
+            i, j = random.sample(range(len(individuo)), 2)
+            individuo[i], individuo[j] = individuo[j], individuo[i]
+        return individuo
+
+    def executarAg(self):
+        """
+        Executa o Algoritmo Genético completo:
+        - Inicializa população
+        - Faz seleção por torneio
+        - Aplica crossover OX
+        - Aplica mutação swap
+        - Mantém elitismo
+        - Atualiza o melhor indivíduo
+
+        Retorna:
+            tuple:
+                melhor_individuo (list[int]): Melhor rota encontrada.
+                melhor_custo (int): Custo da melhor rota.
+        """
+        populacao = self.inicializarPopulacao()
+
+        melhor_individuo = min(
+                                ((self.calcularCusto(individuo), individuo) for individuo in populacao))[1]
+        melhor_custo = self.calcularCusto(melhor_individuo)
+
+        for g in range(1, self.geracoes + 1):
+
+            nova = []
+
+            if self.elitismo: # se elitismo ativado, preserva o melhor indivíduo da geração anterior
+                nova.append(melhor_individuo[:])
+
+            while len(nova) < self.tamanho_populacao:    # gera filhos até completar o tamanho da população
+
+
+                # seleciona dois pais via torneio
+                p1 = self.selecaoTorneio(populacao)
+                p2 = self.selecaoTorneio(populacao)
+                #Realiza o cruzamento
+                filho = self.crossoverOx(p1, p2)
+                #aplica mutação swap no filho
+                filho = self.mutacaoSwap(filho)
+                # adiciona filho à nova população
+                nova.append(filho)
+
+            populacao = nova
+            
+            candidato = min((self.calcularCusto(ind), ind) for ind in populacao)[1] #Encontra o candidato(melhor indivíduo da nova geração)
+            custo_cand = self.calcularCusto(candidato)
+
+            if custo_cand < melhor_custo:
+                melhor_individuo = candidato[:]
+                melhor_custo = custo_cand
+
+        return melhor_individuo, melhor_custo
+
+
+if __name__ == "__main__":
+    caminho = "edgesBrasil58.tsp"
+    num_cidades = 58 # Número de cidades da intância
+
+    tsp = LeituraTsp(caminho, num_cidades)
+    ag = AlgoritmoGenetico(tsp,
+                          tamanho_populacao=120,
+                          geracoes=200,
+                          taxa_mutacao=0.1,
+                          elitismo=True,
+                          torneio_k=3)
+
+    melhor_individuo, calcularCusto = ag.executarAg()
+
+
     def selecionar_arquivo(window):
     #Abre uma janela para o usuário selecionar um arquivo de arquivo txt.
         resultado=None
