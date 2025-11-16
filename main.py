@@ -2,7 +2,7 @@ import itertools as it
 import numpy as np
 
 class PontoEntrega:
-
+    
     def __init__(self, nome_ponto, x, y):
         self.nome_ponto = nome_ponto # Representa os possíveis nomes: A,B,C,D ou R dos objetos pontos criados
         self.x = x #Distância Horizontal
