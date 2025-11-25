@@ -4,7 +4,7 @@ from tkextrafont import Font
 import main
 import webbrowser
 
-resultado = None
+melhor_individuo, calcularCusto, tempo_total = None, None, None
 
 def abrir_link_github():
     """Abre o link do repositório do projeto no GitHub em uma nova aba do navegador."""
@@ -12,8 +12,8 @@ def abrir_link_github():
     webbrowser.open_new_tab(url) # Abre a URL em uma nova aba.
 
 def armazenar_resultado(window):
-    global resultado
-    resultado = main.RotasDrone.selecionar_arquivo(window)
+    global melhor_individuo, calcularCusto, tempo_total
+    melhor_individuo, calcularCusto, tempo_total = main.AlgoritmoGenetico.selecionar_arquivo(window)
 
 def relative_to_assets(path: str) -> Path:
     """Monta um caminho absoluto para um arquivo de asset, facilitando o acesso."""
@@ -83,8 +83,8 @@ button_1 = Button(
     activebackground="#7B6052"
 )
 button_1.place(
-    x=471.0,
-    y=126.0,
+    x=250.0,
+    y=140.0,
     width=137.0,
     height=57.0
 )
@@ -96,13 +96,13 @@ button_2 = Button(
     image=button_image_2,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: main.RotasDrone.imprimir_caminho(resultado, window, label_1),
+    command=lambda: main.AlgoritmoGenetico.imprimir_caminho(window,melhor_individuo, calcularCusto, tempo_total, label_1, label_2, label_3),
     relief="flat",
     activebackground="#7B6052"
 )
 button_2.place(
-    x=469.0,
-    y=312.0,
+    x=690.0,
+    y=140.0,
     width=137.0,
     height=57.0
 )
@@ -111,8 +111,8 @@ button_2.place(
 image_image_5 = PhotoImage(
     file=relative_to_assets("image_5.png"))
 image_5 = canvas.create_image(
-    539.113525390625,
-    70.0,
+    320,
+    84.0,
     image=image_image_5
 )
 
@@ -121,7 +121,7 @@ image_image_2 = PhotoImage(
     file=relative_to_assets("image_2.png"))
 image_2 = canvas.create_image(
     538.0,
-    246.0,
+    94.0,
     image=image_image_2
 )
 
@@ -130,7 +130,7 @@ image_image_6 = PhotoImage(
     file=relative_to_assets("image_6.png"))
 image_6 = canvas.create_image(
     540.0,
-    400.0,
+    330.0,
     image=image_image_6
 )
 
@@ -139,7 +139,7 @@ image_image_7 = PhotoImage(
     file=relative_to_assets("image_7.png"))
 image_7 = canvas.create_image(
     670.0,
-    475.0,
+    480.0,
     image=image_image_7
 )
 
@@ -148,7 +148,7 @@ image_image_8 = PhotoImage(
     file=relative_to_assets("image_8.png"))
 image_8 = canvas.create_image(
     380.0,
-    475.0,
+    480.0,
     image=image_image_8
 )
 
@@ -160,12 +160,14 @@ label_1 = Label(
     highlightthickness=0,
     font=("LEMONMILK-Bold", 32),
     text="",  # O texto começa vazio
+    wraplength=780,
+    justify='center',
 )
 label_1.place(
     x=150.0,
-    y=374.0,
+    y=240.0,
     width=780.0,
-    height=46.0,
+    height=180.0,
 )
 
 #Label para a distância total
@@ -176,10 +178,11 @@ label_2 = Label(
     highlightthickness=0,
     font=("LEMONMILK-Bold", 32),
     text="",  # O texto começa vazio
+    justify='left',
 )
 label_2.place(
     x=430.0,
-    y=450.0,
+    y=456.0,
     width=76.0,
     height=46.0,
 )
@@ -192,10 +195,11 @@ label_3 = Label(
     highlightthickness=0,
     font=("LEMONMILK-Bold", 32),
     text="",  # O texto começa vazio
+    justify='left',
 )
 label_3.place(
     x=690.0,
-    y=450.0,
+    y=455.0,
     width=76.0,
     height=46.0,
 )
@@ -212,25 +216,25 @@ button_3 = Button(
     activebackground="#7B6052"
 )
 button_3.place(
-    x=432.0,
-    y=523.0,
-    width=216.0,
+    x=440.0,
+    y=520.0,
+    width=200.0,
     height=16.0
 )
 
 #logo flyfood
 image_image_4 = PhotoImage(
     file=relative_to_assets("image_4.png"))
-image_3 = canvas.create_image(
-    90.0,
-    153.0,
+image_4 = canvas.create_image(
+    760.0,
+    84.0,
     image=image_image_4
 )
 
 #texto tempo total
 canvas.create_text(
     552.0,
-    462.0,
+    467.0,
     anchor="nw",
     text="tempo total:",
     fill="#372115",
@@ -240,7 +244,7 @@ canvas.create_text(
 #texto distância total
 canvas.create_text(
     260.0,
-    462.0,
+    467.0,
     anchor="nw",
     text="DISTÂNCIA TOTAL:",
     fill="#372115",

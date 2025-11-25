@@ -1,25 +1,25 @@
 import itertools as it
 from tkinter import Label, PhotoImage, Toplevel, Button, Frame, filedialog
 import random
+import time
 
 class LeituraTsp:
-    def __init__(self, caminho_arquivo, num_cidades):
+    def __init__(self, num_cidades, arquivo_tsp):
         """
         Inicializa o leitor do arquivo TSP.
 
         Parâmetros:
-            caminho_arquivo (str): Caminho para o arquivo contendo a matriz TSP.
             num_cidades (int): Quantidade de cidades a serem lidas.
+            arquivo (str): Arquivo TSP.
 
         Atributos:
             valores_linhas (list[list[int]]): Linhas do formato triangular superior.
             distancias (dict): Dicionário {(i,j): custo} simétrico.
         """
-        self.caminho = caminho_arquivo
         self.n = num_cidades
-        self.valores_linhas, self.distancias = self.lerArquivoTsp()
+        self.valores_linhas, self.distancias = self.lerArquivoTsp(arquivo_tsp)
 
-    def lerArquivoTsp(self):
+    def lerArquivoTsp(self, arquivo_tsp):
         """
         Lê um arquivo TSP no formato UPPER_ROW (apenas números).
 
@@ -30,7 +30,8 @@ class LeituraTsp:
                 - distancias (dict): Dicionário contendo a matriz de distâncias
                   completa no formato {(i, j): valor}.
         """
-        with open(self.caminho, "r") as f:
+
+        with open(arquivo_tsp, "r") as f:
             espacos = f.read().split()
 
         numeros = [int(elemento) for elemento in espacos] #Converte cada elemento string da matriz em inteiro
@@ -246,58 +247,48 @@ class AlgoritmoGenetico:
 
         return melhor_individuo, melhor_custo
 
+    def selecionar_arquivo(window):
+    #Abre uma janela para o usuário selecionar um arquivo de arquivo tsp.
+        arquivo = None
+        arquivo = filedialog.askopenfilename( # Abre a janela de seleção de arquivo.
+            title="Selecione o caminho",
+            filetypes=[("Ficheiros de Texto", "*.tsp")] #Exemplo "*.tsp"
+        )
 
-if __name__ == "__main__":
-    caminho = "edgesBrasil58.tsp"
-    num_cidades = 58 # Número de cidades da intância
+        if not arquivo: # Se o usuário cancelar a seleção, a função termina.
+            return None, None, None
+        
+        inicio=time.time()
 
-    tsp = LeituraTsp(caminho, num_cidades)
-    ag = AlgoritmoGenetico(tsp,
+        tsp=LeituraTsp(num_cidades=58, arquivo_tsp = arquivo)
+        ag = AlgoritmoGenetico(tsp,
                           tamanho_populacao=120,
                           geracoes=200,
                           taxa_mutacao=0.1,
                           elitismo=True,
                           torneio_k=3)
 
-    melhor_individuo, calcularCusto = ag.executarAg()
+        melhor_individuo, calcularCusto = ag.executarAg()
 
+        fim=time.time()
+        tempo=(fim-inicio)
+        tempo_total=f"{tempo:.2f}s"
 
-    def selecionar_arquivo(window):
-    #Abre uma janela para o usuário selecionar um arquivo de arquivo txt.
-        resultado=None
-        arquivo_matriz = None
-        arquivo_matriz = filedialog.askopenfilename( # Abre a janela de seleção de arquivo.
-            title="Selecione o caminho",
-            filetypes=[("Ficheiros de Texto", "*.txt")] #Exemplo "*.txt"
-        )
-
-        if not arquivo_matriz: # Se o usuário cancelar a seleção, a função termina.
-            return
-        else:
-            with open(arquivo_matriz, "r", encoding="utf-8") as f:
-                linhas_arquivo = f.read().splitlines()
-
-            linhas, colunas = map(int, linhas_arquivo[0].split())
-            if linhas > 15 or colunas > 15:
-                GuiTools.custom_messagebox(window, "Aviso", "O programa não suporta matrizes maiores que 12 X 12.")
-                return
-            
-            matriz = [linha.split() for linha in linhas_arquivo[1:]]
-
-            drone = RotasDrone(linhas, colunas, matriz)
-            resultado = drone.calcularMelhorRota(window)
-        if resultado:
+        if melhor_individuo:
             GuiTools.custom_messagebox(window, "Arquivo carregado com sucesso", "A melhor rota foi calculada, clique no botão Gerar Caminho para visualizar o resultado.")
-            return resultado
+            return melhor_individuo, calcularCusto, tempo_total
+        else:
+            GuiTools.custom_messagebox(window, "Erro na seleção de arquivo", "O Arquivo selecionado não é compatível com o programa.")
 
-    def imprimir_caminho(resultado,window, label):
-        print(resultado)
-        if resultado is None:
+    def imprimir_caminho(window, melhor_individuo, calcular_Custo, tempo_total, label_rota, label_custo, label_tempo):
+        print(melhor_individuo)
+        if melhor_individuo is None:
             GuiTools.custom_messagebox(window, "Erro na seleção de arquivo", "Nenhum arquivo foi selecionado. Por favor, selecione um arquivo válido.")
         else:
-            tamanho_fonte = GuiTools.tamanho_caminho(resultado)
-            label.config(text=resultado, font=("LEMONMILK-Bold", tamanho_fonte))
-
+            label_rota.config(text=melhor_individuo, font=("LEMONMILK-Bold", 14))
+            label_custo.config(text=calcular_Custo, font=("LEMONMILK-Bold", 12))
+            label_tempo.config(text=tempo_total, font=("LEMONMILK-Bold", 12))
+    
 class GuiTools:
     def custom_messagebox(master,titulo, mensagem):
         """Exibe uma caixa de diálogo modal com mensagem e botão "OK".
@@ -459,3 +450,17 @@ class GuiTools:
             elif comprimento > 12:
                 tamanho = 8
         return tamanho
+
+if __name__ == "__main__":
+    caminho = "edgesBrasil58.tsp"
+    num_cidades = 58 # Número de cidades da intância
+
+    tsp = LeituraTsp(caminho, num_cidades)
+    ag = AlgoritmoGenetico(tsp,
+                            tamanho_populacao=120,
+                            geracoes=200,
+                            taxa_mutacao=0.1,
+                            elitismo=True,
+                            torneio_k=3)
+
+    melhor_individuo, calcularCusto = ag.executarAg()
