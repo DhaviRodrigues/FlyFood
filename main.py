@@ -294,7 +294,7 @@ class AlgoritmoGenetico:
         tsp=LeituraTsp(num_cidades=58, arquivo_tsp = arquivo)
         ag = AlgoritmoGenetico(tsp,
                           tamanho_populacao=120,
-                          geracoes=4000,
+                          geracoes=8000,
                           taxa_mutacao=0.31,
                           elitismo=True,
                           torneio_k=3)
@@ -480,15 +480,10 @@ class GuiTools:
         return tamanho
 
     def gerar_grafico(historico_custos):
-        # O eixo Y são os custos que salvamos
         y = historico_custos
-        
-        # O eixo X são as gerações (de 1 até o total de gerações)
         x = [i + 1 for i in range(len(historico_custos))]
-
         plt.figure(figsize=(10, 5))
-        
-        # Plotar a linha
+
         plt.plot(x, y, color='blue', linewidth=2)
         
         plt.title('Evolução do Custo por Geração')
@@ -497,10 +492,8 @@ class GuiTools:
         plt.grid(True)
         plt.show()
 
-    # Atualize também o mostrar_grafico para passar o parâmetro correto
     def mostrar_grafico(window, arquivo, melhor_individuo, historico_custos):
         if historico_custos:
-            # Ignora melhor_individuo e arquivo, foca no histórico
             GuiTools.gerar_grafico(historico_custos)
         else:
             GuiTools.custom_messagebox(window, "Erro", "Nenhum histórico disponível.")
