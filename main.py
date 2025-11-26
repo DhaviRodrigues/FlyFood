@@ -295,7 +295,7 @@ class AlgoritmoGenetico:
         ag = AlgoritmoGenetico(tsp,
                           tamanho_populacao=120,
                           geracoes=4000,
-                          taxa_mutacao=0.32,
+                          taxa_mutacao=0.31,
                           elitismo=True,
                           torneio_k=3)
 
