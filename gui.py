@@ -12,8 +12,8 @@ def abrir_link_github():
     webbrowser.open_new_tab(url) # Abre a URL em uma nova aba.
 
 def armazenar_resultado(window):
-    global melhor_individuo, calcularCusto, tempo_total
-    melhor_individuo, calcularCusto, tempo_total = main.AlgoritmoGenetico.selecionar_arquivo(window)
+    global melhor_individuo, calcularCusto, tempo_total, arquivo
+    arquivo = main.AlgoritmoGenetico.selecionar_arquivo(window)
 
 def relative_to_assets(path: str) -> Path:
     """Monta um caminho absoluto para um arquivo de asset, facilitando o acesso."""
@@ -96,7 +96,7 @@ button_2 = Button(
     image=button_image_2,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: main.AlgoritmoGenetico.imprimir_caminho(window,melhor_individuo, calcularCusto, tempo_total, label_1, label_2, label_3),
+    command=lambda: main.AlgoritmoGenetico.gerar_caminho(window, arquivo, melhor_individuo, calcularCusto, tempo_total, label_1, label_2, label_3),
     relief="flat",
     activebackground="#7B6052"
 )

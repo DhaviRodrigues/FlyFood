@@ -269,7 +269,17 @@ class AlgoritmoGenetico:
 
         if not arquivo: # Se o usuário cancelar a seleção, a função termina.
             return None, None, None
+
+        GuiTools.custom_messagebox(window, "Arquivo Carregado",'Arquivo carregado. Selecione "Gerar Caminho" para iniciar o cálculo.')
+
+        return arquivo
+    
+    def gerar_caminho(window, arquivo, melhor_individuo, calcular_Custo, tempo_total, label_rota, label_custo, label_tempo):
+        melhor_individuo, calcular_Custo, tempo_total = AlgoritmoGenetico.calcular_caminho(window, arquivo)
+        AlgoritmoGenetico.imprimir_caminho(window, melhor_individuo, calcular_Custo, tempo_total, label_rota, label_custo, label_tempo)
         
+    def calcular_caminho(window, arquivo):
+        GuiTools.custom_messagebox(window, "Calculando Rota", "O cálculo da melhor rota pode levar alguns segundos. Por favor, aguarde.")
         inicio=time.time()
 
         tsp=LeituraTsp(num_cidades=58, arquivo_tsp = arquivo)
@@ -287,19 +297,17 @@ class AlgoritmoGenetico:
         tempo_total=f"{tempo:.2f}s"
 
         if melhor_individuo:
-            GuiTools.custom_messagebox(window, "Arquivo carregado com sucesso", "A melhor rota foi calculada, clique no botão Gerar Caminho para visualizar o resultado.")
             return melhor_individuo, calcularCusto, tempo_total
-        else:
-            GuiTools.custom_messagebox(window, "Erro na seleção de arquivo", "O Arquivo selecionado não é compatível com o programa.")
+        
+        GuiTools.custom_messagebox(window, "Erro na seleção de arquivo", "Nenhum arquivo foi selecionado. Por favor, selecione um arquivo válido.")
+
 
     def imprimir_caminho(window, melhor_individuo, calcular_Custo, tempo_total, label_rota, label_custo, label_tempo):
         print(melhor_individuo)
-        if melhor_individuo is None:
-            GuiTools.custom_messagebox(window, "Erro na seleção de arquivo", "Nenhum arquivo foi selecionado. Por favor, selecione um arquivo válido.")
-        else:
-            label_rota.config(text=melhor_individuo, font=("LEMONMILK-Bold", 14))
-            label_custo.config(text=calcular_Custo, font=("LEMONMILK-Bold", 12))
-            label_tempo.config(text=tempo_total, font=("LEMONMILK-Bold", 12))
+
+        label_rota.config(text=melhor_individuo, font=("LEMONMILK-Bold", 14))
+        label_custo.config(text=calcular_Custo, font=("LEMONMILK-Bold", 12))
+        label_tempo.config(text=tempo_total, font=("LEMONMILK-Bold", 12))
     
 class GuiTools:
     def custom_messagebox(master,titulo, mensagem):
