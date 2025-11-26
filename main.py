@@ -2,6 +2,7 @@ import itertools as it
 from tkinter import Label, PhotoImage, Toplevel, Button, Frame, filedialog
 import random
 import time
+import matplotlib.pyplot as plt
 
 class LeituraTsp:
     def __init__(self, num_cidades, arquivo_tsp):
@@ -62,11 +63,10 @@ class LeituraTsp:
 
         return valores_linhas, distancias
 
-
 class AlgoritmoGenetico:
     def __init__(self, dados_matriz: LeituraTsp,
                  tamanho_populacao=120,
-                 geracoes=200,
+                 geracoes=30000,
                  taxa_mutacao=0.1,
                  elitismo=True,
                  torneio_k=3):
@@ -216,6 +216,8 @@ class AlgoritmoGenetico:
                                 ((self.calcularCusto(individuo), individuo) for individuo in populacao))[1]
         melhor_custo = self.calcularCusto(melhor_individuo)
 
+        historico_custo= []
+
         for g in range(1, self.geracoes + 1):
 
             nova = []
@@ -256,8 +258,10 @@ class AlgoritmoGenetico:
             if custo_cand < melhor_custo:
                 melhor_individuo = candidato[:]
                 melhor_custo = custo_cand
+            historico_custo.append(melhor_custo)
 
-        return melhor_individuo, melhor_custo
+
+        return melhor_individuo, melhor_custo, historico_custo
 
     def selecionar_arquivo(window):
     #Abre uma janela para o usuário selecionar um arquivo de arquivo tsp.
@@ -275,29 +279,34 @@ class AlgoritmoGenetico:
         return arquivo
     
     def gerar_caminho(window, arquivo, melhor_individuo, calcular_Custo, tempo_total, label_rota, label_custo, label_tempo):
-        melhor_individuo, calcular_Custo, tempo_total = AlgoritmoGenetico.calcular_caminho(window, arquivo)
+        melhor_individuo, calcular_Custo, tempo_total, historico_calculo = AlgoritmoGenetico.calcular_caminho(window, arquivo, label_rota)
+
         AlgoritmoGenetico.imprimir_caminho(window, melhor_individuo, calcular_Custo, tempo_total, label_rota, label_custo, label_tempo)
+
+        return melhor_individuo, calcular_Custo, tempo_total, historico_calculo
         
-    def calcular_caminho(window, arquivo):
+    def calcular_caminho(window, arquivo, label_rota):
+        label_rota.config(text="CALCULANDO CAMINHO...", font=("LEMONMILK-Bold", 18))
         GuiTools.custom_messagebox(window, "Calculando Rota", "O cálculo da melhor rota pode levar alguns segundos. Por favor, aguarde.")
+        
         inicio=time.time()
 
         tsp=LeituraTsp(num_cidades=58, arquivo_tsp = arquivo)
         ag = AlgoritmoGenetico(tsp,
                           tamanho_populacao=120,
-                          geracoes=8000,
-                          taxa_mutacao=0.31,
+                          geracoes=4000,
+                          taxa_mutacao=0.32,
                           elitismo=True,
                           torneio_k=3)
 
-        melhor_individuo, calcularCusto = ag.executarAg()
+        melhor_individuo, calcularCusto, historico_custo = ag.executarAg()
 
         fim=time.time()
         tempo=(fim-inicio)
         tempo_total=f"{tempo:.2f}s"
 
         if melhor_individuo:
-            return melhor_individuo, calcularCusto, tempo_total
+            return melhor_individuo, calcularCusto, tempo_total, historico_custo
         
         GuiTools.custom_messagebox(window, "Erro na seleção de arquivo", "Nenhum arquivo foi selecionado. Por favor, selecione um arquivo válido.")
 
@@ -375,7 +384,6 @@ class GuiTools:
         """
         dialog.result = resultado  # Atribui o resultado a um atributo da janela de diálogo.
         dialog.destroy()  # Fecha a janela de diálogo.
-
 
     def custom_yn(master, titulo, mensagem):
         """
@@ -470,6 +478,32 @@ class GuiTools:
             elif comprimento > 12:
                 tamanho = 8
         return tamanho
+
+    def gerar_grafico(historico_custos):
+        # O eixo Y são os custos que salvamos
+        y = historico_custos
+        
+        # O eixo X são as gerações (de 1 até o total de gerações)
+        x = [i + 1 for i in range(len(historico_custos))]
+
+        plt.figure(figsize=(10, 5))
+        
+        # Plotar a linha
+        plt.plot(x, y, color='blue', linewidth=2)
+        
+        plt.title('Evolução do Custo por Geração')
+        plt.xlabel('Geração')
+        plt.ylabel('Custo (Distância Total)')
+        plt.grid(True)
+        plt.show()
+
+    # Atualize também o mostrar_grafico para passar o parâmetro correto
+    def mostrar_grafico(window, arquivo, melhor_individuo, historico_custos):
+        if historico_custos:
+            # Ignora melhor_individuo e arquivo, foca no histórico
+            GuiTools.gerar_grafico(historico_custos)
+        else:
+            GuiTools.custom_messagebox(window, "Erro", "Nenhum histórico disponível.")
 
 if __name__ == "__main__":
     caminho = "edgesBrasil58.tsp"

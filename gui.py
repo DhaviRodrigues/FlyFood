@@ -4,7 +4,7 @@ from tkextrafont import Font
 import main
 import webbrowser
 
-melhor_individuo, calcularCusto, tempo_total = None, None, None
+melhor_individuo, calcularCusto, tempo_total, arquivo, historico_custo = None, None, None, None, None
 
 def abrir_link_github():
     """Abre o link do repositório do projeto no GitHub em uma nova aba do navegador."""
@@ -14,6 +14,10 @@ def abrir_link_github():
 def armazenar_resultado(window):
     global melhor_individuo, calcularCusto, tempo_total, arquivo
     arquivo = main.AlgoritmoGenetico.selecionar_arquivo(window)
+
+def botao_gerar_caminho():
+    global melhor_individuo, calcularCusto, tempo_total, arquivo, historico_custo
+    melhor_individuo, calcularCusto, tempo_total, historico_custo = main.AlgoritmoGenetico.gerar_caminho(window, arquivo, melhor_individuo, calcularCusto, tempo_total, label_1, label_2, label_3)
 
 def relative_to_assets(path: str) -> Path:
     """Monta um caminho absoluto para um arquivo de asset, facilitando o acesso."""
@@ -96,13 +100,31 @@ button_2 = Button(
     image=button_image_2,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: main.AlgoritmoGenetico.gerar_caminho(window, arquivo, melhor_individuo, calcularCusto, tempo_total, label_1, label_2, label_3),
+    command=lambda: botao_gerar_caminho(),
     relief="flat",
     activebackground="#7B6052"
 )
 button_2.place(
     x=690.0,
     y=140.0,
+    width=137.0,
+    height=57.0
+)
+
+#botão gerar gráfico
+button_image_4 = PhotoImage(
+    file=relative_to_assets("button_4.png"))
+button_4 = Button(
+    image=button_image_4,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: main.GuiTools.mostrar_grafico(window, arquivo, melhor_individuo, historico_custos=historico_custo),
+    relief="flat",
+    activebackground="#7B6052"
+)
+button_4.place(
+    x=455.0,
+    y=500.0,
     width=137.0,
     height=57.0
 )
@@ -139,7 +161,7 @@ image_image_7 = PhotoImage(
     file=relative_to_assets("image_7.png"))
 image_7 = canvas.create_image(
     670.0,
-    480.0,
+    472.0,
     image=image_image_7
 )
 
@@ -148,7 +170,7 @@ image_image_8 = PhotoImage(
     file=relative_to_assets("image_8.png"))
 image_8 = canvas.create_image(
     380.0,
-    480.0,
+    472.0,
     image=image_image_8
 )
 
@@ -182,7 +204,7 @@ label_2 = Label(
 )
 label_2.place(
     x=430.0,
-    y=456.0,
+    y=448.0,
     width=76.0,
     height=46.0,
 )
@@ -199,7 +221,7 @@ label_3 = Label(
 )
 label_3.place(
     x=690.0,
-    y=455.0,
+    y=447.0,
     width=76.0,
     height=46.0,
 )
@@ -217,7 +239,7 @@ button_3 = Button(
 )
 button_3.place(
     x=440.0,
-    y=520.0,
+    y=210.0,
     width=200.0,
     height=16.0
 )
@@ -234,7 +256,7 @@ image_4 = canvas.create_image(
 #texto tempo total
 canvas.create_text(
     552.0,
-    467.0,
+    459.0,
     anchor="nw",
     text="tempo total:",
     fill="#372115",
@@ -244,7 +266,7 @@ canvas.create_text(
 #texto distância total
 canvas.create_text(
     260.0,
-    467.0,
+    459.0,
     anchor="nw",
     text="DISTÂNCIA TOTAL:",
     fill="#372115",
