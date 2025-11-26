@@ -78,7 +78,7 @@ class AlgoritmoGenetico:
             tamanho_populacao (int): Quantidade de indivíduos na população.
             geracoes (int): Número de gerações.
             taxa_mutacao (float): Probabilidade de mutação.
-            elitismo (bool): Se True, preserva o melhor_individuo indivíduo de cada geração.
+            elitismo (bool): Se True, preserva o melhor_individuo de cada geração.
             torneio_k (int): Número de competidores na seleção por torneio.
         """
         self.dist = dados_matriz.distancias # dicionário {(i,j): custo}
@@ -230,14 +230,26 @@ class AlgoritmoGenetico:
                 p1 = self.selecaoTorneio(populacao)
                 p2 = self.selecaoTorneio(populacao)
                 #Realiza o cruzamento
-                filho = self.crossoverOx(p1, p2)
+                filho1 = self.crossoverOx(p1, p2)
+                filho2 = self.crossoverOx(p2, p1)
                 #aplica mutação swap no filho
-                filho = self.mutacaoSwap(filho)
+                filho1 = self.mutacaoSwap(filho1)
+                filho2 = self.mutacaoSwap(filho2)
                 # adiciona filho à nova população
-                nova.append(filho)
+                #nova.append(filho1)
+                #nova.append(filho2)
 
-            populacao = nova
+                if random.random() <= 0.9:      # 90% de chance
+                    filho1 = self.mutacaoSwap(filho1)
+                    filho2 = self.mutacaoSwap(filho2)
+                    nova.append(filho1)    # entra o filho mutado
+                    nova.append(filho2)
+                else:
+                    nova.append(p1[:])  # entra o pai como sobrevivente
+                    nova.append(p2[:])                
             
+            populacao = nova
+
             candidato = min((self.calcularCusto(ind), ind) for ind in populacao)[1] #Encontra o candidato(melhor indivíduo da nova geração)
             custo_cand = self.calcularCusto(candidato)
 
@@ -263,8 +275,8 @@ class AlgoritmoGenetico:
         tsp=LeituraTsp(num_cidades=58, arquivo_tsp = arquivo)
         ag = AlgoritmoGenetico(tsp,
                           tamanho_populacao=120,
-                          geracoes=200,
-                          taxa_mutacao=0.1,
+                          geracoes=8000,
+                          taxa_mutacao=0.31,
                           elitismo=True,
                           torneio_k=3)
 
