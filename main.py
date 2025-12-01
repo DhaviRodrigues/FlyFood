@@ -1,4 +1,3 @@
-import itertools as it
 from tkinter import Label, PhotoImage, Toplevel, Button, Frame, filedialog
 import random
 import time
@@ -294,8 +293,8 @@ class AlgoritmoGenetico:
         tsp=LeituraTsp(num_cidades=58, arquivo_tsp = arquivo)
         ag = AlgoritmoGenetico(tsp,
                           tamanho_populacao=120,
-                          geracoes=8000,
-                          taxa_mutacao=0.31,
+                          geracoes=4000,
+                          taxa_mutacao=0.25,
                           elitismo=True,
                           torneio_k=3)
 
@@ -313,7 +312,7 @@ class AlgoritmoGenetico:
 
     def imprimir_caminho(window, melhor_individuo, calcular_Custo, tempo_total, label_rota, label_custo, label_tempo):
         print(melhor_individuo)
-
+        
         label_rota.config(text=melhor_individuo, font=("LEMONMILK-Bold", 14))
         label_custo.config(text=calcular_Custo, font=("LEMONMILK-Bold", 12))
         label_tempo.config(text=tempo_total, font=("LEMONMILK-Bold", 12))
