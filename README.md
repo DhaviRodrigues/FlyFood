@@ -19,7 +19,7 @@ Este projeto integra conhecimentos de **estrutura de dados**, **algoritmos heur�
 
 ## Funcionalidades
 
-- Leitura de arquivos de entrada `.txt` contendo a matriz de dados.  
+- Leitura de arquivos de entrada `.tsp` no caso da segunda release, e `.txt` na primeira release contendo a matriz de dados.  
 - Identificação automática de **origem e destino**.  
 - Geração e exibição de caminhos válidos.  
 - Cálculo de custo total e distância percorrida.  
@@ -44,7 +44,8 @@ FlyFood/
 │
 ├── assets/               # Imagens e ícones usados pela interface
 ├── fonts/                # Fontes personalizadas
-├── .vscode/             
+├── .vscode/
+├── matrizes&arquivosTSP/ # Arquivos de testes, TSPs, e matrizes.
 │
 ├── gui.py                # Interface gráfica principal
 ├── main.py               # Funções de Busca
